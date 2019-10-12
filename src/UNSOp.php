@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PDOBulk\Db;
 
-abstract class BulkOp
+abstract class UNSOp
 {
 
     private $pdo;

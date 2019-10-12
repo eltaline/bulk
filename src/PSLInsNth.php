@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PDOBulk\Db;
 
-class BulkInsNth extends BulkOp
+class PSLInsNth extends UNSOp
 {
 
     protected function getQuery(int $numRecords) : string

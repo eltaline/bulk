@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PDOBulk\Db;
 
-class BulkDel extends BulkOp
+class UNSDel extends UNSOp
 {
 
     protected function getQuery(int $numRecords) : string
