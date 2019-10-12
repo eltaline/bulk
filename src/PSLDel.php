@@ -12,8 +12,8 @@ class PSLDel extends BulkDB
 
         $parts = [];
 
-        foreach ($this->fields as $field) {
-            $parts[] = $field . ' = ?';
+        foreach ($this->ifields as $ifield) {
+            $parts[] = $ifield . ' = ?';
         }
 
         $where = '(' . implode(' AND ', $parts) . ')';
