@@ -50,9 +50,9 @@ abstract class BulkDB
             throw new \InvalidArgumentException('The field list is empty');
         }
 
-        $this->pdo        = $pdo;
-        $this->table      = $table;
-        $this->ifields    = $ifields;
+        $this->pdo     = $pdo;
+        $this->table   = $table;
+        $this->ifields = $ifields;
 
         $this->inumFields = $inumFields;
 
@@ -62,7 +62,58 @@ abstract class BulkDB
 
         if ($enumFields >= 1) {
 
+	    $regpat = '/[\+\-\*\/\|]/';
+	    $delims = '\+\-\*\/\|';
+
 	    foreach ($efields as $efield) {
+
+		if (preg_match($regpat, $efield)) {
+
+		    $earray = preg_split('/([' . $delims . '])/', $efield, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+		    $efs = $earray[0];
+		    $eop = $earray[1];
+		    $ese = $earray[2];
+
+		    if ($eop === '+') {
+			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' + ' . $ese . '';
+			$ufields[] = $fill;
+			continue;
+		    } elseif ($eop === '-') {
+			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' - ' . $ese . '';
+			$ufields[] = $fill;
+			continue;
+		    } elseif ($eop === '*') {
+			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' * ' . $ese . '';
+			$ufields[] = $fill;
+			continue;
+		    } elseif ($eop === '/') {
+			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' / ' . $ese . '';
+			$ufields[] = $fill;
+			continue;
+		    } elseif ($eop === '|') {
+
+			$edl = $earray[4] ?? null;
+
+			if (!is_null($edl)) {
+
+			    $fill = '' . $efs . ' = EXCLUDED.' . $efs . ' || \'' . $edl . '\' || ' . $table . '.' . $ese . '';
+			    $ufields[] = $fill;
+			    continue;
+
+			} else {
+
+			    throw new \InvalidArgumentException('The concatenation delimiter can not be empty and need to be legal same delimiter \';\'');
+
+			}
+
+		    } else {
+
+		        throw new \InvalidArgumentException('Mode not supported');
+
+		    }
+
+		}
 
 		$fill = '' . $efield . ' = EXCLUDED.' . $efield . '';
 		$ufields[] = $fill;
