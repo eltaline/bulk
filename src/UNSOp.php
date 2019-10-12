@@ -113,25 +113,25 @@ abstract class UNSOp
     public function flush() : void
     {
 
-        if ($this->bufferSize === 0) {
+        if ($this->ibufferSize === 0) {
             return;
         }
 
-        $query = $this->getQuery($this->bufferSize);
+        $query = $this->getQuery($this->ibufferSize);
         $statement = $this->pdo->prepare($query);
-        $statement->execute($this->buffer);
+        $statement->execute($this->ibuffer);
         $this->affectedRows += $statement->rowCount();
 
-        $this->buffer = [];
-        $this->bufferSize = 0;
+        $this->ibuffer = [];
+        $this->ibufferSize = 0;
 
     }
 
     public function reset() : void
     {
 
-        $this->buffer = [];
-        $this->bufferSize = 0;
+        $this->ibuffer = [];
+        $this->ibufferSize = 0;
         $this->affectedRows = 0;
         $this->totalOperations = 0;
 
@@ -147,14 +147,14 @@ abstract class UNSOp
     public function getFlushedOperations() : int
     {
 
-        return $this->totalOperations - $this->bufferSize;
+        return $this->totalOperations - $this->ibufferSize;
 
     }
 
     public function getPendingOperations() : int
     {
 
-        return $this->bufferSize;
+        return $this->ibufferSize;
 
     }
 
