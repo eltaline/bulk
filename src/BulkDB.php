@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PDOBulk\Db;
 
-abstract class UNSOp
+abstract class BulkDB
 {
 
     private $pdo;
@@ -18,7 +18,7 @@ abstract class UNSOp
 
     protected $inumFields;
     protected $cnumFields;
-    protected $unumFields;
+    protected $enumFields;
 
     private $operationsPerQuery;
     private $preparedStatement;
@@ -31,7 +31,7 @@ abstract class UNSOp
 
     private $affectedRows = 0;
 
-    public function __construct(\PDO $pdo, int $operationsPerQuery, string $table, array $ifields ?? [], array $cfields ?? [], array $efields ?? [])
+    public function __construct(\PDO $pdo, int $operationsPerQuery, string $table, array $ifields = [], array $cfields = [], array $efields = [])
     {
 
         if (($operationsPerQuery < 1) || (!is_int($operationsPerQuery))) {
@@ -44,7 +44,7 @@ abstract class UNSOp
 
         $inumFields = count($ifields);
         $cnumFields = count($cfields);
-        $unumFields = count($ufields);
+        $enumFields = count($efields);
 
         if ($inumFields === 0) {
             throw new \InvalidArgumentException('The field list is empty');
@@ -60,7 +60,7 @@ abstract class UNSOp
 	    $this->cfields = $cfields;
 	}
 
-        if ($unumFields >= 1) {
+        if ($enumFields >= 1) {
 
 	    foreach ($efields as $efield) {
 
