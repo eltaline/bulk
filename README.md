@@ -306,8 +306,13 @@ $pdo->commit();
 
 ### PSLInsUpd & MSLInsUpd
 
-This class takes advantage of the bulk insert with advanced logic in tables.
+This class takes advantage of the bulk insert with simple math logic in tables.
 Implements ON CONFLICT (unqiue/composite key) DO UPDATE SET ... and ON DUPLICATE KEY UPDATE ... .
+
+Supported + - / * operators (column+column, column-column, column/column , column*column).
+
+Also implemented basic concatenations with separator (column|column|;) where ; is separator
+for concatenation of existing value with new value delimiting by separator.
 
 To use it, create a `PSLInsUpd` or `MSLInsUpd` instance with:
 
@@ -322,6 +327,7 @@ To use it, create a `PSLInsUpd` or `MSLInsUpd` instance with:
 
 In this examples we are working with table contains composite primary key ['id', 'name'] and
 with/without custom simple logic with addition new value to current value in for update columns.
+Also shows example with concatenation.
 
 Addition logic sometimes needed for statistical addition in fields.
 
@@ -555,6 +561,248 @@ $pdo->commit();
 
 ```
 
+### Concatenation Logic
+
+#### PostgreSQL With Concatenation Logic:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\PSLInsUpd;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+//Define Logic
+
+$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;']);
+
+//Prepare Queries for Bulk Operation
+
+$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
+$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
+$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
+
+//Bulk Write Complete Operation
+
+$ins->flush();
+```
+
+#### MySQL With Concatenation Logic:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\MSLInsUpd;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+//Define Logic
+
+$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;']);
+
+//Prepare Queries for Bulk Operation
+
+$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
+$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
+$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
+
+//Bulk Write Complete Operation
+
+$ins->flush();
+```
+
+#### PostgreSQL with Transaction and Concatenation Logic:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\PSLInsUpd;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+//Define Logic
+
+$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;']);
+
+$pdo->beginTransaction();
+
+//Prepare Queries for Bulk Operation
+
+$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
+$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
+$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
+
+//Bulk Write Complete Operation
+
+$ins->flush();
+
+$pdo->commit();
+
+```
+
+#### MySQL with Transaction and Concatenation Logic:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\MSLInsUpd;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+//Define Logic
+
+$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;']);
+
+$pdo->beginTransaction();
+
+//Prepare Queries for Bulk Operation
+
+$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
+$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
+$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
+
+//Bulk Write Complete Operation
+
+$ins->flush();
+
+$pdo->commit();
+
+```
+
+### PSLDel & MSLDel
+
+This class takes advantage of the bulk delete by value`s of column or columns.
+Implements DELETE FROM.
+
+To use it, create a `PSLDel` or `MSLDel` instance with:
+
+- your `PDO` connection object
+- the name of your table
+- the number of deletes to perform per bulk query
+- the name of the column or columns for where statement
+
+#### Examples
+
+#### PostgreSQL:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\PSLDel;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+//Define Logic
+
+$ins = new PSLDel($pdo, 1000, 'tablename', ['id', 'name']);
+
+//Prepare Queries for Bulk Operation
+
+$ins->Queue(1, 'Mark');
+$ins->Queue(2, 'Steve');
+$ins->Queue(3, 'Clara');
+
+//Bulk Write Complete Operation
+
+$ins->flush();
+```
+
+#### MySQL:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\MSLDel;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+$ins = new MSLDel($pdo, 1000, 'tablename', ['id', 'name']);
+
+//Prepare Queries for Bulk Operation
+
+$ins->Queue(1, 'Mark');
+$ins->Queue(2, 'Steve');
+$ins->Queue(3, 'Clara');
+
+//Bulk Write Complete Operation
+
+$ins->flush();
+```
+
+#### PostgreSQL with Transaction:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\PSLDel;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+//Define Logic
+
+$ins = new PSLDel($pdo, 1000, 'tablename', ['id', 'name']);
+
+$pdo->beginTransaction();
+
+//Prepare Queries for Bulk Operation
+
+$ins->Queue(1, 'Mark');
+$ins->Queue(2, 'Steve');
+$ins->Queue(3, 'Clara');
+
+//Bulk Write Complete Operation
+
+$ins->flush();
+
+$pdo->commit();
+
+```
+
+#### MySQL with Transaction:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\MSLDel;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+//Define Logic
+
+$ins = new MSLDel($pdo, 1000, 'tablename', ['id', 'name']);
+
+$pdo->beginTransaction();
+
+//Prepare Queries for Bulk Operation
+
+$ins->Queue(1, 'Mark');
+$ins->Queue(2, 'Steve');
+$ins->Queue(3, 'Clara');
+
+//Bulk Write Complete Operation
+
+$ins->flush();
+
+$pdo->commit();
+
+```
+
 ### Performance tips
 
 To get the maximum performance out of this library, you should:
@@ -563,6 +811,10 @@ To get the maximum performance out of this library, you should:
 - disable emulation of prepared statements (`PDO::ATTR_EMULATE_PREPARES=false`)
 
 These two tips combined can get you **up to 50% more throughput** in terms of inserts per second. Sample code:
+
+### Recommendations
+
+When using transactions, I recommend not forget use over this helpers - try and catch with throw and ```$pdo->rollBack();```.
 
 ### Limitations
 
