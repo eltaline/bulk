@@ -463,6 +463,8 @@ $ins->flush();
 #### MySQL With Addition Logic:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\MSLInsUpd;
 
 $pdo = new PDO(...);
