@@ -76,19 +76,19 @@ abstract class BulkDB
 		    $ese = $earray[2];
 
 		    if ($eop === '+') {
-			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' + ' . $ese . '';
+			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' + ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
 		    } elseif ($eop === '-') {
-			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' - ' . $ese . '';
+			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' - ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
 		    } elseif ($eop === '*') {
-			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' * ' . $ese . '';
+			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' * ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
 		    } elseif ($eop === '/') {
-			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' / ' . $ese . '';
+			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' / ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
 		    } elseif ($eop === '|') {
