@@ -308,8 +308,8 @@ To use it, create a `PSLInsUpd` or `MSLInsUpd` instance with:
 - the name of your table
 - the number of inserts to perform per bulk query
 - the name of the columns to insert
-- the name of the columns as primary key of table (unique/compostite)
-- the name of the columns for update or update+update
+- the name of the columns as primary key of table (unique/composite)
+- the name of the columns for update or column names with format column+column for update and value addition
 
 #### Examples
 
@@ -561,7 +561,7 @@ These two tips combined can get you **up to 50% more throughput** in terms of in
 
 Be careful when raising the number of operations per query, as you might hit these limits.
 
-Recommend use this library with 100-50000 queries per bulk query inserions.
+Recommend use this library with 100-50000 queries per bulk query insertions.
 
 - PHP's [memory_limit]
 - MySQL's [max_allowed_packet]
