@@ -508,8 +508,6 @@ $pdo->commit();
 
 ```
 
-#### Tips
-
 ### Performance tips
 
 To get the maximum performance out of this library, you should:
