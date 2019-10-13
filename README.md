@@ -58,6 +58,8 @@ To use it, create a `PSLIns` or `MSLIns` instance with:
 #### PostgreSQL:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\PSLIns;
 
 $pdo = new PDO(...);
@@ -82,6 +84,8 @@ $ins->flush();
 #### MySQL:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\MSLIns;
 
 $pdo = new PDO(...);
@@ -106,6 +110,8 @@ $ins->flush();
 #### PostgreSQL with Transaction:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\PSLIns;
 
 $pdo = new PDO(...);
@@ -135,6 +141,8 @@ $pdo->commit();
 #### MySQL with Transaction:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\MSLIns;
 
 $pdo = new PDO(...);
@@ -178,6 +186,8 @@ To use it, create a `PSLInsNth` or `MSLInsNth` instance with:
 #### PostgreSQL:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\PSLInsNth;
 
 $pdo = new PDO(...);
@@ -202,6 +212,8 @@ $ins->flush();
 #### MySQL:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\MSLInsNth;
 
 $pdo = new PDO(...);
@@ -226,6 +238,8 @@ $ins->flush();
 #### PostgreSQL with Transaction:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\PSLInsNth;
 
 $pdo = new PDO(...);
@@ -255,6 +269,8 @@ $pdo->commit();
 #### MySQL with Transaction:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\MSLInsNth;
 
 $pdo = new PDO(...);
@@ -305,6 +321,8 @@ Addition logic sometimes needed for statistical addition in fields.
 #### PostgreSQL:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\PSLInsUpd;
 
 $pdo = new PDO(...);
@@ -329,6 +347,8 @@ $ins->flush();
 #### MySQL:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\MSLInsUpd;
 
 $pdo = new PDO(...);
@@ -353,6 +373,8 @@ $ins->flush();
 #### PostgreSQL with Transaction:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\PSLInsUpd;
 
 $pdo = new PDO(...);
@@ -382,6 +404,8 @@ $pdo->commit();
 #### MySQL with Transaction:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\MSLInsUpd;
 
 $pdo = new PDO(...);
@@ -413,6 +437,8 @@ $pdo->commit();
 #### PostgreSQL With Addition Logic:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\PSLInsUpd;
 
 $pdo = new PDO(...);
@@ -461,6 +487,8 @@ $ins->flush();
 #### PostgreSQL with Transaction and Addition Logic:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\PSLInsUpd;
 
 $pdo = new PDO(...);
@@ -490,6 +518,8 @@ $pdo->commit();
 #### MySQL with Transaction and Addition Logic:
 
 ```php
+include(__DIR__ . '/vendor/autoload.php');
+
 use PDOBulk\Db\MSLInsUpd;
 
 $pdo = new PDO(...);
