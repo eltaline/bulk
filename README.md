@@ -305,7 +305,7 @@ $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Define Logic
 
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], [id,name], ['height','weight']);
+$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
 
 //Prepare Queries for Bulk Operation
 
@@ -329,7 +329,7 @@ $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Define Logic
 
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], [id,name], ['height','weight']);
+$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
 
 //Prepare Queries for Bulk Operation
 
@@ -353,7 +353,7 @@ $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Define Logic
 
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], [id,name], ['height','weight']);
+$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
 
 $pdo->beginTransaction();
 
@@ -382,7 +382,7 @@ $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Define Logic
 
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], [id,name], ['height','weight']);
+$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
 
 $pdo->beginTransaction();
 
@@ -411,7 +411,7 @@ $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Define Logic
 
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], [id,name], ['height','weight']);
+$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
 
 //Prepare Queries for Bulk Operation
 
@@ -435,7 +435,7 @@ $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Define Logic
 
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], [id,name], ['height','weight']);
+$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
 
 //Prepare Queries for Bulk Operation
 
@@ -459,7 +459,7 @@ $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Define Logic
 
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], [id,name], ['height+height','weight+weight']);
+$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height+height','weight+weight']);
 
 $pdo->beginTransaction();
 
@@ -488,7 +488,7 @@ $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Define Logic
 
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], [id,name], ['height+height','weight+weight']);
+$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height+height','weight+weight']);
 
 $pdo->beginTransaction();
 
