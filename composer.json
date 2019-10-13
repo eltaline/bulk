@@ -1,4 +1,13 @@
 {
+    "name": "eltaline/bulk",
+    "description": "PDO Bulk Library",
+    "homepage": "https://github.com/eltaline/bulk",
+    "type": "library",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/eltaline/bulk/issues",
+        "source": "https://github.com/eltaline/bulk"
+    },
     "repositories": [
         {
             "type":"package",
@@ -16,5 +25,20 @@
     "require": {
         "eltaline/bulk": "master"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "PDOBulk\\Db\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Andrew Mind",
+            "email": "syslinux@pm.me"
+        },
+        {
+            "name": "Eltaline",
+            "email": "eltaline.ou@gmail.com"
+        }
+    ]
 }
