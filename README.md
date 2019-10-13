@@ -14,7 +14,13 @@ cd /path/to/yourproject
 
 ```bash
 cd /path/to/yourproject
-composer require eltaline/bulk
+composer require eltaline/bulk 
+```
+
+Or install by local file
+
+```bash
+cd /path/to/yourproject
 wget -O composer.json https://raw.githubusercontent.com/eltaline/bulk/master/composer-local.json
 composer install
 ```
