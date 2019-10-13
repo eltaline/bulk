@@ -14,7 +14,7 @@ cd /path/to/yourproject
 
 ```bash
 cd /path/to/yourproject
-wget -O composer.json https://raw.githubusercontent.com/eltaline/bulk/master/composer.json
+wget -O composer.json https://raw.githubusercontent.com/eltaline/bulk/master/composer-local.json
 composer install
 ```
 
