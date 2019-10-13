@@ -34,6 +34,14 @@ MySQL: `MSLIns` ,`MSLInsNth` ,`MSLInsUpd`, `MSLDel`.
 These classes built on top of `PDO`, allow you to speed up database
 rows insertion & deletion by performing multiple(bulk) operations per query, with this API.
 
+### Testing table scheme
+
+Create table for testing in PostgreSQL/MySQL.
+
+```
+CREATE TABLE tablename (id integer NOT NULL, name varchar(128), class varchar(128), age integer, height integer, weight integer, PRIMARY KEY(id,name));
+```
+
 ### PSLIns & MSLIns
 
 This class takes advantage of the bulk insert to empty/temp tables.
@@ -46,12 +54,6 @@ To use it, create a `PSLIns` or `MSLIns` instance with:
 - the name of the columns to insert
 
 #### Examples
-
-Create table for testing in PostgreSQL/MySQL.
-
-```
-CREATE TABLE tablename (id integer NOT NULL, name varchar(128), class varchar(128), age integer, height integer, weight integer, PRIMARY KEY(id,name));
-```
 
 #### PostgreSQL:
 
