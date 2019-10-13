@@ -22,9 +22,6 @@
             }
         }
     ],
-    "require": {
-        "eltaline/bulk": "master"
-    },
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
