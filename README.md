@@ -10,14 +10,14 @@ Currently supported PDO Postgresql/MySQL.
 Installation
 ------------
 
-cd /path/to/yourproject
+Install from composer:
 
 ```bash
 cd /path/to/yourproject
 composer require eltaline/bulk 
 ```
 
-Or install by local file
+Or install by local file:
 
 ```bash
 cd /path/to/yourproject
