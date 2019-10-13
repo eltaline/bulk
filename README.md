@@ -528,6 +528,7 @@ These two tips combined can get you **up to 50% more throughput** in terms of in
 ### Limitations
 
 Be careful when raising the number of operations per query, as you might hit these limits.
+
 Recommend use this library with 100-50000 queries per bulk query inserions.
 
 - PHP's [memory_limit]
