@@ -47,6 +47,12 @@ To use it, create a `PSLIns` or `MSLIns` instance with:
 
 #### Examples
 
+Create table for testing in PostgreSQL/MySQL.
+
+```
+CREATE TABLE tablename (id integer NOT NULL, name varchar(128), class varchar(128), age integer, height integer, weight integer, PRIMARY KEY(id,name));
+```
+
 #### PostgreSQL:
 
 ```php
