@@ -1,16 +1,11 @@
 {
     "repositories": [
         {
-            "type":"package",
-            "package": {
-                "name": "eltaline/bulk",
-                "version":"master",
-                "source": {
-                    "url": "https://github.com/eltaline/bulk.git",
-                    "type": "git",
-                    "reference":"master"
-                }
-            }
+            "name": "eltaline/bulk",
+            "version":"master",
+            "url": "https://github.com/eltaline/bulk.git",
+            "type": "git",
+            "reference":"master"
         }
     ],
     "require": {
