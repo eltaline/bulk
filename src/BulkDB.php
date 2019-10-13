@@ -20,7 +20,7 @@ abstract class BulkDB
     protected $cnumFields;
     protected $enumFields;
 
-    private $operationsPerQuery;
+    private $operationsPerQuery = 0;
     private $preparedStatement;
 
     private $ibuffer = [];
@@ -65,6 +65,25 @@ abstract class BulkDB
 	    $regpat = '/[\+\-\*\/\|]/';
 	    $delims = '\+\-\*\/\|';
 
+	    $ccl = get_class($this);
+
+	    if ($ccl === 'PDOBulk\Db\PSLInsUpd') {
+
+		$iname = 'EXCLUDED.';
+		$ename = '';
+
+	    } elseif ($ccl === 'PDOBulk\Db\MSLInsUpd') {
+
+		$iname = 'VALUES(';
+
+		$ename = ')';
+
+	    } else {
+
+		throw new \InvalidArgumentException('Class not supported');
+
+	    }
+
 	    foreach ($efields as $efield) {
 
 		if (preg_match($regpat, $efield)) {
@@ -76,19 +95,19 @@ abstract class BulkDB
 		    $ese = $earray[2];
 
 		    if ($eop === '+') {
-			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' + ' . $table . '.' . $ese . '';
+			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' + ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
 		    } elseif ($eop === '-') {
-			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' - ' . $table . '.' . $ese . '';
+			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' - ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
 		    } elseif ($eop === '*') {
-			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' * ' . $table . '.' . $ese . '';
+			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' * ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
 		    } elseif ($eop === '/') {
-			$fill = '' . $efs . ' = EXCLUDED.' . $efs . ' / ' . $table . '.' . $ese . '';
+			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' / ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
 		    } elseif ($eop === '|') {
@@ -97,7 +116,7 @@ abstract class BulkDB
 
 			if (!is_null($edl)) {
 
-			    $fill = '' . $efs . ' = EXCLUDED.' . $efs . ' || \'' . $edl . '\' || ' . $table . '.' . $ese . '';
+			    $fill = '' . $efs . ' = CONCAT_WS(\'' . $edl . '\', ' . $iname . '' . $efs . '' . $ename . ', ' . $table . '.' . $ese . ')';
 			    $ufields[] = $fill;
 			    continue;
 
@@ -115,7 +134,7 @@ abstract class BulkDB
 
 		}
 
-		$fill = '' . $efield . ' = EXCLUDED.' . $efield . '';
+		$fill = '' . $efield . ' = ' . $iname . '' . $efield . '' . $ename . '';
 		$ufields[] = $fill;
 
 	    }
@@ -131,7 +150,8 @@ abstract class BulkDB
 
     }
 
-    public function queue(...$ivalues) : bool
+
+    public function Queue(...$ivalues) : bool
     {
 
         $icount = count($ivalues);
