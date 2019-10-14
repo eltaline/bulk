@@ -73,8 +73,8 @@ This class takes advantage of the bulk insert to empty/temp tables.
 To use it, create a `PSLIns` or `MSLIns` instance with:
 
 - your `PDO` connection object
-- the name of your table
 - the number of inserts to perform per bulk query
+- the name of your table
 - the name of the columns to insert
 
 #### Examples
@@ -239,8 +239,8 @@ Implements ON CONFLICT DO NOTHING and INSERT IGNORE.
 To use it, create a `PSLInsNth` or `MSLInsNth` instance with:
 
 - your `PDO` connection object
-- the name of your table
 - the number of inserts to perform per bulk query
+- the name of your table
 - the name of the columns to insert
 
 #### Examples
@@ -410,8 +410,8 @@ for concatenation of existing value with new value delimiting by separator.
 To use it, create a `PSLInsUpd` or `MSLInsUpd` instance with:
 
 - your `PDO` connection object
-- the name of your table
 - the number of inserts to perform per bulk query
+- the name of your table
 - the name of the columns to insert
 - the name of the columns as primary key of table (unique/composite)
 - the name of the columns for update or column names with format column+column for update and value addition
@@ -892,8 +892,8 @@ Implements DELETE FROM.
 To use it, create a `PSLDel` or `MSLDel` instance with:
 
 - your `PDO` connection object
+- the number of inserts to perform per bulk query
 - the name of your table
-- the number of deletes to perform per bulk query
 - the name of the column or columns for where statement
 
 #### Examples
@@ -1063,14 +1063,17 @@ When using transactions, I recommend not forget use over this helpers - try and 
 
 ### Limitations
 
-Be careful when raising the number of operations per query, as you might hit these limits.
+Be careful when raising the number of operations per bulk query, as you might hit these limits.
 
-Recommend use this library with 100-50000 queries per bulk query insertions.
+$ins = new PSLDel($pdo, **1000**, 'tablename', ['columnname']);
+
+Recommended use this library with 100-1000 queries per bulk query insertions.
 
 - PHP's [memory_limit]
 - MySQL's [max_allowed_packet]
-- MySQL also has a limit of 65535 placeholders per statement,
+- PDO also has a limit of 65535 query parameters per statement,
   effectively limiting the number of operations per query to `floor(65535 / number of columns)`.
-  This does not apply if PDO emulates prepared statements.
+
+Maximum 65535 query parameters is allowed. Ex. 65535 / 10 columns ~= 10922 (is max queries per 1 bulk query)
 
 ### END
