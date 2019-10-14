@@ -1065,7 +1065,7 @@ When using transactions, I recommend not forget use over this helpers - try and 
 
 Be careful when raising the number of operations per bulk query, as you might hit these limits.
 
-$ins = new PSLDel($pdo, **1000**, 'tablename', ['columnname']);
+$ins = new PSL...($pdo, **1000**, 'tablename', ['columnname']);
 
 Recommended use this library with 100-1000 queries per bulk query insertions.
 
