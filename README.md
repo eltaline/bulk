@@ -49,6 +49,23 @@ Create table for testing in PostgreSQL/MySQL.
 CREATE TABLE tablename (id integer NOT NULL, name varchar(128), class varchar(128), age integer, height integer, weight integer, PRIMARY KEY(id,name));
 ```
 
+### Description important fucntions
+
+Flush function is important, and need to be used everywhere at the end of work with queue. Do write last queue buffer and reset queue buffer.
+
+$ins->flush();
+
+### Description optional functions 
+
+Can use optional counters in logic.
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+Reset function for buffer and counters, do reset queue buffer and counters.
+
+$ins->reset();
+
 ### PSLIns & MSLIns
 
 This class takes advantage of the bulk insert to empty/temp tables.
@@ -86,6 +103,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL:
@@ -112,6 +139,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### PostgreSQL with Transaction:
@@ -143,6 +180,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL with Transaction:
@@ -174,6 +220,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 ### PSLInsNth & MSLInsNth
@@ -214,6 +269,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL:
@@ -240,6 +305,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### PostgreSQL with Transaction:
@@ -271,6 +346,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL with Transaction:
@@ -302,6 +386,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 ### PSLInsUpd & MSLInsUpd
@@ -355,6 +448,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL:
@@ -381,6 +484,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### PostgreSQL with Transaction:
@@ -412,6 +525,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL with Transaction:
@@ -443,6 +565,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 ### Addition Logic
@@ -471,6 +602,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL With Addition Logic:
@@ -497,6 +638,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### PostgreSQL with Transaction and Addition Logic:
@@ -528,6 +679,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL with Transaction and Addition Logic:
@@ -559,6 +719,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 ### Concatenation Logic
@@ -587,6 +756,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL With Concatenation Logic:
@@ -613,6 +792,16 @@ $ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### PostgreSQL with Transaction and Concatenation Logic:
@@ -644,6 +833,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL with Transaction and Concatenation Logic:
@@ -675,6 +873,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 ### PSLDel & MSLDel
@@ -715,6 +922,16 @@ $ins->Queue(3, 'Clara');
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL:
@@ -739,6 +956,16 @@ $ins->Queue(3, 'Clara');
 //Bulk Write Complete Operation
 
 $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### PostgreSQL with Transaction:
@@ -770,6 +997,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 #### MySQL with Transaction:
@@ -801,6 +1037,15 @@ $ins->flush();
 
 $pdo->commit();
 
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for buffer and counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
 ```
 
 ### Performance tips

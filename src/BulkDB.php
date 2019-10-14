@@ -151,7 +151,7 @@ abstract class BulkDB
     }
 
 
-    public function Queue(...$ivalues) : bool
+    public function queue(...$ivalues) : bool
     {
 
         $icount = count($ivalues);
