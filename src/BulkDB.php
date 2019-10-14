@@ -75,7 +75,6 @@ abstract class BulkDB
 	    } elseif ($ccl === 'PDOBulk\Db\MSLInsUpd') {
 
 		$iname = 'VALUES(';
-
 		$ename = ')';
 
 	    } else {
