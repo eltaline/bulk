@@ -10,13 +10,27 @@ class PSLIns extends BulkDB
     protected function getQuery(int $numRecords) : string
     {
 
-        $ifields = implode(', ', $this->ifields);
-        $ivalues = implode(', ', array_fill(0, $this->inumFields, '?'));
+	$ifields = implode(', ', $this->ifields);
+	$rfields = implode(', ', $this->rfields);
 
-        $query  = 'INSERT INTO ' . $this->table . ' (' . $ifields . ') VALUES (' . $ivalues . ')';
-        $query .= str_repeat(', (' . $ivalues . ')', $numRecords - 1);
+	$ivalues = implode(', ', array_fill(0, $this->inumFields, '?'));
 
-        return $query;
+	$query  = 'INSERT INTO ' . $this->table . ' (' . $ifields . ') VALUES (' . $ivalues . ')';
+
+	if (empty($rfields)) {
+
+	    $endquery = '';
+
+	} elseif (!empty($rfields)) {
+
+	    $endquery = ' RETURNING ' . $rfields . '';
+
+	}
+
+	$query .= str_repeat(', (' . $ivalues . ')', $numRecords - 1);
+	$query = ''. $query . '' . $endquery . '';
+
+	return $query;
 
     }
 

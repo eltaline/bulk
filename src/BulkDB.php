@@ -15,10 +15,13 @@ abstract class BulkDB
     protected $cfields = [];
     protected $ufields = [];
     protected $efields = [];
+    protected $rfields = [];
+    protected $style = [];
 
     protected $inumFields;
     protected $cnumFields;
     protected $enumFields;
+    protected $rnumFields;
 
     private $operationsPerQuery = 0;
     private $preparedStatement;
@@ -31,41 +34,44 @@ abstract class BulkDB
 
     private $affectedRows = 0;
 
-    public function __construct(\PDO $pdo, int $operationsPerQuery, string $table, array $ifields = [], array $cfields = [], array $efields = [])
+    private $result;
+
+    public function __construct(\PDO $pdo, int $operationsPerQuery, string $table, array $ifields = [], array $cfields = [], array $efields = [], array $rfields = [], array $style = [])
     {
 
-        if (($operationsPerQuery < 1) || (!is_int($operationsPerQuery))) {
-            throw new \InvalidArgumentException('The number of operations per query must be 1 or more and need to be integer');
-        }
+	$ccl = get_class($this);
 
-        if (!is_string($table)) {
-            throw new \InvalidArgumentException('The table name need to be string');
-        }
+	if (($operationsPerQuery < 1) || (!is_int($operationsPerQuery))) {
+	    throw new \InvalidArgumentException('The number of operations per query must be 1 or more and need to be integer');
+	}
 
-        $inumFields = count($ifields);
-        $cnumFields = count($cfields);
-        $enumFields = count($efields);
+	if (!is_string($table)) {
+	    throw new \InvalidArgumentException('The table name need to be string');
+	}
 
-        if ($inumFields === 0) {
-            throw new \InvalidArgumentException('The field list is empty');
-        }
+	$inumFields = count($ifields);
+	$cnumFields = count($cfields);
+	$enumFields = count($efields);
+	$rnumFields = count($rfields);
 
-        $this->pdo     = $pdo;
-        $this->table   = $table;
-        $this->ifields = $ifields;
+	if ($inumFields === 0) {
+	    throw new \InvalidArgumentException('The field list is empty');
+	}
 
-        $this->inumFields = $inumFields;
+	$this->pdo     = $pdo;
+	$this->table   = $table;
+	$this->ifields = $ifields;
 
-        if ($cnumFields >= 1) {
+	$this->inumFields = $inumFields;
+
+	if ($cnumFields >= 1) {
 	    $this->cfields = $cfields;
 	}
 
-        if ($enumFields >= 1) {
+	if ($enumFields >= 1) {
 
 	    $regpat = '/[\+\-\*\/\|]/';
 	    $delims = '\+\-\*\/\|';
-
-	    $ccl = get_class($this);
 
 	    if ($ccl === 'PDOBulk\Db\PSLInsUpd') {
 
@@ -127,7 +133,7 @@ abstract class BulkDB
 
 		    } else {
 
-		        throw new \InvalidArgumentException('Mode not supported');
+			throw new \InvalidArgumentException('Mode not supported');
 
 		    }
 
@@ -142,96 +148,203 @@ abstract class BulkDB
 
 	}
 
-        $this->operationsPerQuery = $operationsPerQuery;
+	if ($rnumFields >= 1) {
+		$this->rfields = $rfields;
+	}
 
-        $query = $this->getQuery($operationsPerQuery);
-        $this->preparedStatement = $this->pdo->prepare($query);
+	if (!empty($style)) {
 
-    }
+	    $regpat = '/[\|]/';
+	    $delims = '\|';
 
+	    foreach ($style as $setting) {
 
-    public function queue(...$ivalues) : bool
-    {
+		if (preg_match($regpat, $setting)) {
 
-        $icount = count($ivalues);
+		    $sarray = preg_split('/([' . $delims . '])/', $setting);
 
-        if ($icount !== $this->inumFields) {
-            throw new \InvalidArgumentException(sprintf('The number of values (%u) does not match the field count (%u).', $icount, $this->numFields));
-        }
+		    if (!empty($sarray[0])) $this->fstyle = $sarray[0];
+		    if (!empty($sarray[1])) $this->sstyle = $sarray[1];
 
-        foreach ($ivalues as $ivalue) {
-            $this->ibuffer[] = $ivalue;
-        }
+		} else {
 
-        $this->ibufferSize++;
-        $this->totalOperations++;
+		    $this->fstyle = $style[0];
 
-        if ($this->ibufferSize !== $this->operationsPerQuery) {
-            return false;
-        }
+		}
 
-        $this->preparedStatement->execute($this->ibuffer);
-        $this->affectedRows += $this->preparedStatement->rowCount();
+	    }
 
-        $this->ibuffer = [];
-        $this->ibufferSize = 0;
+	}
 
-        return true;
+	$this->operationsPerQuery = $operationsPerQuery;
+
+	$query = $this->getQuery($operationsPerQuery);
+	$this->preparedStatement = $this->pdo->prepare($query);
 
     }
 
-    public function flush() : void
+    public function queue(...$ivalues)
     {
 
-        if ($this->ibufferSize === 0) {
-            return;
-        }
+	$icount = count($ivalues);
 
-        $query = $this->getQuery($this->ibufferSize);
-        $statement = $this->pdo->prepare($query);
-        $statement->execute($this->ibuffer);
-        $this->affectedRows += $statement->rowCount();
+	if ($icount !== $this->inumFields) {
+	    throw new \InvalidArgumentException(sprintf('The number of values (%u) does not match the field count (%u).', $icount, $this->numFields));
+	}
 
-        $this->ibuffer = [];
-        $this->ibufferSize = 0;
+	foreach ($ivalues as $ivalue) {
+	    $this->ibuffer[] = $ivalue;
+	}
+
+	$this->ibufferSize++;
+	$this->totalOperations++;
+
+	if ($this->ibufferSize !== $this->operationsPerQuery) {
+	    return false;
+	}
+
+	$statement = $this->preparedStatement;
+	$statement->execute($this->ibuffer);
+
+	if ((!empty($this->fstyle)) && (empty($this->sstyle))) {
+	    $result = $statement->fetchAll(constant($this->fstyle));
+	} elseif ((!empty($this->fstyle)) && (!empty($this->sstyle))) {
+	    $result = $statement->fetchAll(constant($this->fstyle)|constant($this->sstyle));
+	}
+
+	$this->affectedRows += $statement->rowCount();
+
+	$this->ibuffer = [];
+	$this->ibufferSize = 0;
+
+	if (!empty($result)) {
+	    return $result;
+	} else {
+	    return true;
+	}
+
+    }
+
+    public function queuearray(array $ivalues = [])
+    {
+
+	$icount = count($ivalues);
+
+	if ($icount !== $this->inumFields) {
+	    throw new \InvalidArgumentException(sprintf('The number of values (%u) does not match the field count (%u).', $icount, $this->numFields));
+	}
+
+	foreach ($ivalues as $ivalue) {
+	    $this->ibuffer[] = $ivalue;
+	}
+
+	$this->ibufferSize++;
+	$this->totalOperations++;
+
+	if ($this->ibufferSize !== $this->operationsPerQuery) {
+	    return false;
+	}
+
+	$statement = $this->preparedStatement;
+	$statement->execute($this->ibuffer);
+
+	if ((!empty($this->fstyle)) && (empty($this->sstyle))) {
+	    $result = $statement->fetchAll(constant($this->fstyle));
+	} elseif ((!empty($this->fstyle)) && (!empty($this->sstyle))) {
+	    $result = $statement->fetchAll(constant($this->fstyle)|constant($this->sstyle));
+	}
+
+	$this->affectedRows += $statement->rowCount();
+
+	$this->ibuffer = [];
+	$this->ibufferSize = 0;
+
+	if (!empty($result)) {
+	    return $result;
+	} else {
+	    return true;
+	}
+
+    }
+
+    public function flush()
+    {
+
+	if ($this->ibufferSize === 0) {
+	    return;
+	}
+
+	$query = $this->getQuery($this->ibufferSize);
+	$statement = $this->pdo->prepare($query);
+	$statement->execute($this->ibuffer);
+
+	if ((!empty($this->fstyle)) && (empty($this->sstyle))) {
+	    $result = $statement->fetchAll(constant($this->fstyle));
+	} elseif ((!empty($this->fstyle)) && (!empty($this->sstyle))) {
+	    $result = $statement->fetchAll(constant($this->fstyle)|constant($this->sstyle));
+	}
+
+	$this->affectedRows += $statement->rowCount();
+
+	$this->ibuffer = [];
+	$this->ibufferSize = 0;
+
+	if (!empty($result)) {
+	    return $result;
+	}
 
     }
 
     public function reset() : void
     {
 
-        $this->ibuffer = [];
-        $this->ibufferSize = 0;
-        $this->affectedRows = 0;
-        $this->totalOperations = 0;
+	$this->affectedRows = 0;
+	$this->totalOperations = 0;
+
+    }
+
+    public function resetbuf() : void
+    {
+
+	$this->ibuffer = [];
+	$this->ibufferSize = 0;
+    }
+
+    public function resetall() : void
+    {
+
+	$this->ibuffer = [];
+	$this->ibufferSize = 0;
+	$this->affectedRows = 0;
+	$this->totalOperations = 0;
 
     }
 
     public function getTotalOperations() : int
     {
 
-        return $this->totalOperations;
+	return $this->totalOperations;
 
     }
 
     public function getFlushedOperations() : int
     {
 
-        return $this->totalOperations - $this->ibufferSize;
+	return $this->totalOperations - $this->ibufferSize;
 
     }
 
     public function getPendingOperations() : int
     {
 
-        return $this->ibufferSize;
+	return $this->ibufferSize;
 
     }
 
     public function getAffectedRows() : int
     {
 
-        return $this->affectedRows;
+	return $this->affectedRows;
 
     }
 

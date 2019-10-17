@@ -35,8 +35,8 @@ Package overview
 
 This package contains several helpers:
 
-PgSQL: `PSLIns` ,`PSLInsNth` ,`PSLInsUpd`, `PSLDel`.
-MySQL: `MSLIns` ,`MSLInsNth` ,`MSLInsUpd`, `MSLDel`.
+PgSQL: `PSLIns`, `PSLInsNth`, `PSLInsUpd`, `PSLDel`.
+MySQL: `MSLIns`, `MSLInsNth`, `MSLInsUpd`, `MSLDel`.
 
 These classes built on top of `PDO`, allow you to speed up database
 rows insertion & deletion by performing multiple(bulk) operations per query, with this API.
@@ -51,24 +51,42 @@ CREATE TABLE tablename (id integer NOT NULL, name varchar(128), class varchar(12
 
 ### Description important fucntions
 
-Flush function is important, and need to be used everywhere at the end of work with queue. Do write last queue buffer and reset queue buffer.
+**Flush function is important, and need to be used everywhere at the end of work with queue. Do write last queue buffer and reset queue buffer.**
 
-$ins->flush();
+```php
+$ins->flush(); // Write last or < queue size, part of data from queue.
+```
+
+**Queue functions queue() or queuearray() can be used only separately in one loop.
+
+```php
+$ins->queue(); // Collect data values until queue size, then write part of data.
+$ins->queuearray(); // Collect data values(from simple array with single query values of data) until queue size, then write part of data.
+```
 
 ### Description optional functions 
 
 Can use optional counters in logic.
 
+```php
 $tot = $ins->getTotalOperations();
 $aff = $ins->getAffectedRows();
+```
 
 Reset function for buffer and counters, do reset queue buffer and counters.
 
-$ins->reset();
+```php
+$ins->reset(); // Resetting only counters
+$ins->resetbuf(); // Resetting only buffer
+$ins->resetall(); // Resetting buffer and counters
+```
 
 ### PSLIns & MSLIns
 
 This class takes advantage of the bulk insert to empty/temp tables.
+Implements INSERT ... .
+
+- Supported RETURNING operator.
 
 To use it, create a `PSLIns` or `MSLIns` instance with:
 
@@ -76,160 +94,10 @@ To use it, create a `PSLIns` or `MSLIns` instance with:
 - the number of inserts to perform per bulk query
 - the name of your table
 - the name of the columns to insert
-
-#### Examples
-
-#### PostgreSQL:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLIns;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLIns($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLIns;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLIns($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### PostgreSQL with Transaction:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLIns;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLIns($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL with Transaction:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLIns;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLIns($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
+- optional set empty array(not used for INSERT, but need empty if set RETURNING options)
+- optional set empty array(not used for INSERT, but need empty if set RETURNING options)
+- optional set RETURNING field or fields or '*'
+- optional set PDO fetch mode for RETURNING clause(by default empty)
 
 ### PSLInsNth & MSLInsNth
 
@@ -243,169 +111,14 @@ To use it, create a `PSLInsNth` or `MSLInsNth` instance with:
 - the name of your table
 - the name of the columns to insert
 
-#### Examples
-
-#### PostgreSQL:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLInsNth;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLInsNth($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLInsNth;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLInsNth($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### PostgreSQL with Transaction:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLInsNth;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLInsNth($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL with Transaction:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLInsNth;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLInsNth($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
 ### PSLInsUpd & MSLInsUpd
 
 This class takes advantage of the bulk insert with simple math logic in tables.
 Implements ON CONFLICT (unqiue/composite key) DO UPDATE SET ... and ON DUPLICATE KEY UPDATE ... .
 
-Supported + - / * operators (column+column, column-column, column/column , column*column).
-
-Also implemented basic concatenations with separator (column|column|;) where ; is separator
-for concatenation of existing value with new value delimiting by separator.
+- Supported + - / * math operators (column+column, column-column, column/column , column*column).
+- Supported | concatenation operator (column|column|;) where ; is separator.
+- Supported RETURNING operator.
 
 To use it, create a `PSLInsUpd` or `MSLInsUpd` instance with:
 
@@ -415,474 +128,8 @@ To use it, create a `PSLInsUpd` or `MSLInsUpd` instance with:
 - the name of the columns to insert
 - the name of the columns as primary key of table (unique/composite)
 - the name of the columns for update or column names with format column+column for update and value addition
-
-#### Examples
-
-In this examples we are working with table contains composite primary key ['id', 'name'] and
-with/without custom simple logic with addition new value to current value in for update columns.
-Also shows example with concatenation.
-
-Addition logic sometimes needed for statistical addition in fields.
-
-#### PostgreSQL:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### PostgreSQL with Transaction:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL with Transaction:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height','weight']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-### Addition Logic
-
-#### PostgreSQL With Addition Logic:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height+height','weight+weight']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL With Addition Logic:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height+height','weight+weight']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### PostgreSQL with Transaction and Addition Logic:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height+height','weight+weight']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL with Transaction and Addition Logic:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['height+height','weight+weight']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-### Concatenation Logic
-
-#### PostgreSQL With Concatenation Logic:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL With Concatenation Logic:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### PostgreSQL with Transaction and Concatenation Logic:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\PSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL with Transaction and Concatenation Logic:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
-use PDOBulk\Db\MSLInsUpd;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new MSLInsUpd($pdo, 1000, 'tablename', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark', 'Soldier' , 24, 185, 85);
-$ins->Queue(2, 'Steve', 'Engineer', 36, 180, 75);
-$ins->Queue(3, 'Clara', 'Sniper', 18, 175, 50);
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
+- optional set RETURNING field or fields or '*'
+- optional set PDO fetch mode for RETURNING clause(by default empty)
 
 ### PSLDel & MSLDel
 
@@ -895,154 +142,360 @@ To use it, create a `PSLDel` or `MSLDel` instance with:
 - the number of inserts to perform per bulk query
 - the name of your table
 - the name of the column or columns for where statement
+- optional set empty array(not using now for DELETE, but need empty if set RETURNING options)
+- optional set empty array(not using now for DELETE, but need empty if set RETURNING options)
+- optional set RETURNING field or fields or '*'
+- optional set PDO fetch mode for RETURNING clause(by default empty)
 
-#### Examples
-
-#### PostgreSQL:
+### Beginning
 
 ```php
 include(__DIR__ . '/vendor/autoload.php');
 
+use PDOBulk\Db\PSLIns;
+use PDOBulk\Db\PSLInsNth;
+use PDOBulk\Db\PSLInsUpd;
 use PDOBulk\Db\PSLDel;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLDel($pdo, 1000, 'tablename', ['id', 'name']);
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark');
-$ins->Queue(2, 'Steve');
-$ins->Queue(3, 'Clara');
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
+use PDOBulk\Db\MSLIns;
+use PDOBulk\Db\MSLInsNth;
+use PDOBulk\Db\MSLInsUpd;
 use PDOBulk\Db\MSLDel;
 
 $pdo = new PDO(...);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-$ins = new MSLDel($pdo, 1000, 'tablename', ['id', 'name']);
+$data = array();
 
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark');
-$ins->Queue(2, 'Steve');
-$ins->Queue(3, 'Clara');
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
+$data[] = ['1', 'Mark', 'Soldier' , '24', '175', '85'];
+$data[] = ['2', 'Steve', 'Engineer', '36', '190', '95'];
+$data[] = ['3', 'Clara', 'Sniper', '18', '180', '57'];
 ```
 
-#### PostgreSQL with Transaction:
+### Transactions
+
+You can also use transaction for speed up bulk query.
+
+```php
+$pdo->beginTransaction(); // Before loop with queue() or queuearray();
+$pdo->commit(); // After loop with queue() or queuearray();
+```
+
+Additionally use try with catch (Exception $e) for rollback transaction;
+
+```php
+foreach (...) { 
+
+    try {
+
+	$ins->queue(...);
+	//$ins->queuearray(...);
+
+    } catch (Exception $e) {
+
+	$pdo->rollBack();
+
+    }
+
+}
+
+$ins->flush();
+```
+
+### Simple Operations
+
+Supported in next classes:
+
+PgSQL: `PSLIns`, `PSLInsNth`, `PSLInsUpd`, `PSLDel`.
+MySQL: `MSLIns`, `PSLInsNth`, `MSLInsUpd`, `MSLDel`.
+
+ - Classes PSLInsNth & MSLInsNth implements ON CONFLICT DO NOTHING & INSERT IGNORE clauses.
+
+Format: (connection object, queue size, table, [values columns])
+
+```php
+$ins = new PSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+$ins = new MSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+```
+
+Format: (connection object, queue size, table, [values columns])
+
+```php
+$ins = new PSLInsNth($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+$ins = new MSLInsNth($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+```
+
+Format: (connection object, queue size, table, [values columns], [conflict/duplicate columns], [update columns])
+
+```php
+$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight']);
+$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight']);
+```
+
+Format: (connection object, queue size, table, [values columns], [not using now], [not using now], [returning columns], [fetch mode])
+
+```php
+$ins = new PSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+$ins = new MSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+```
+
+#### Full example:
 
 ```php
 include(__DIR__ . '/vendor/autoload.php');
 
+use PDOBulk\Db\PSLIns;
+use PDOBulk\Db\PSLInsNth;
+use PDOBulk\Db\PSLInsUpd;
 use PDOBulk\Db\PSLDel;
-
-$pdo = new PDO(...);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-//Define Logic
-
-$ins = new PSLDel($pdo, 1000, 'tablename', ['id', 'name']);
-
-$pdo->beginTransaction();
-
-//Prepare Queries for Bulk Operation
-
-$ins->Queue(1, 'Mark');
-$ins->Queue(2, 'Steve');
-$ins->Queue(3, 'Clara');
-
-//Bulk Write Complete Operation
-
-$ins->flush();
-
-$pdo->commit();
-
-$tot = $ins->getTotalOperations();
-$aff = $ins->getAffectedRows();
-
-//Reset function for buffer and counters
-
-$ins->reset();
-
-print("Total queue operations: " . $tot . "\n");
-print("Total affected rows: " . $aff . "\n");
-```
-
-#### MySQL with Transaction:
-
-```php
-include(__DIR__ . '/vendor/autoload.php');
-
+use PDOBulk\Db\MSLIns;
+use PDOBulk\Db\MSLInsNth;
+use PDOBulk\Db\MSLInsUpd;
 use PDOBulk\Db\MSLDel;
 
 $pdo = new PDO(...);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-//Define Logic
+$data = array();
 
-$ins = new MSLDel($pdo, 1000, 'tablename', ['id', 'name']);
+$data[] = ['1', 'Mark', 'Soldier' , '24', '175', '85'];
+$data[] = ['2', 'Steve', 'Engineer', '36', '190', '95'];
+$data[] = ['3', 'Clara', 'Sniper', '18', '180', '57'];
 
-$pdo->beginTransaction();
+$ins = new PSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+//$ins = new PSLInsNth($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+//$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight']);
+//$ins = new PSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+//$ins = new MSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+//$ins = new MSLInsNth($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
+//$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight']);
+//$ins = new MSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
 
-//Prepare Queries for Bulk Operation
+foreach ($data as $fields) {
 
-$ins->Queue(1, 'Mark');
-$ins->Queue(2, 'Steve');
-$ins->Queue(3, 'Clara');
+    $id = $fields[0];
+    $name = $fields[1];
+    $class = $fields[2];
+    $age = $fields[3];
+    $height = $fields[4];
+    $weight = $fields[5];
+
+    $ins->queue($id, $name, $class, $age, $height, $weight);
+    //$ins->queuearray($fields);
+
+}
 
 //Bulk Write Complete Operation
 
-$ins->flush();
-
-$pdo->commit();
+$res = $ins->flush();
 
 $tot = $ins->getTotalOperations();
 $aff = $ins->getAffectedRows();
 
-//Reset function for buffer and counters
+//Reset function for counters
 
 $ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
+```
+
+### Advanced Operations
+
+Supported in next classes:
+
+PgSQL: `PSLInsUpd`.
+MySQL: `MSLInsUpd`.
+
+ - Supported math/concatenation operations on fields with previous values.
+
+Format: (connection object, queue size, table, [values columns], [conflict/duplicate columns], [update columns])
+
+```php
+$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight+weight']);
+$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight+weight']);
+
+$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight-weight']);
+$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight-weight']);
+
+$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight*weight']);
+$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight*weight']);
+
+$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight/weight']);
+$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight/weight']);
+```
+
+#### Full example:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\PSLIns;
+use PDOBulk\Db\PSLInsNth;
+use PDOBulk\Db\PSLInsUpd;
+use PDOBulk\Db\PSLDel;
+use PDOBulk\Db\MSLIns;
+use PDOBulk\Db\MSLInsNth;
+use PDOBulk\Db\MSLInsUpd;
+use PDOBulk\Db\MSLDel;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+$data = array();
+
+$data[] = ['1', 'Mark', 'Soldier' , '24', '175', '85'];
+$data[] = ['2', 'Steve', 'Engineer', '36', '190', '95'];
+$data[] = ['3', 'Clara', 'Sniper', '18', '180', '57'];
+
+$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight+weight']);
+//$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class|class|;','weight+weight']);
+
+foreach ($data as $fields) {
+
+    $id = $fields[0];
+    $name = $fields[1];
+    $class = $fields[2];
+    $age = $fields[3];
+    $height = $fields[4];
+    $weight = $fields[5];
+
+    $ins->queue($id, $name, $class, $age, $height, $weight);
+    //$ins->queuearray($fields);
+
+}
+
+//Bulk Write Complete Operation
+
+$res = $ins->flush();
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for counters
+
+$ins->reset();
+
+print("Total queue operations: " . $tot . "\n");
+print("Total affected rows: " . $aff . "\n");
+```
+
+### Returning Operations
+
+Supported in next classes:
+
+PgSQL: `PSLIns`, `PSLInsUpd`, `PSLDel`.
+MySQL: `MSLIns`, `MSLInsUpd`, `MSLDel`.
+
+Use one of supported class with RETURNING operator.
+
+ - Last argument is PDO fetch mode
+ - Also can use advanced math/concatenation operations together with returning operations
+
+Supported fetch modes:
+
+```
+PDO::FETCH_BOTH, PDO::FETCH_NUM,
+PDO::FETCH_ASSOC, PDO::FETCH_UNIQUE,
+PDO::FETCH_GROUP, PDO::FETCH_KEY_PAIR,
+PDO::FETCH_GROUP|PDO::FETCH_COLUMN,
+PDO::FETCH_OBJ
+```
+
+Format: (connection object, queue size, table, [values columns], [not used], [not used], [returning columns], [fetch mode])
+
+```php
+$ins = new PSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+$ins = new MSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+```
+
+Format: (connection object, queue size, table, [values columns], [conflict/duplicate columns], [update columns], [returning columns], [fetch mode])
+
+```php
+$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight'], ['id,name'], ['PDO::FETCH_ASSOC']);
+$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight'], ['id,name'], ['PDO::FETCH_ASSOC']);
+```
+
+Format: (connection object, queue size, table, [values columns], [not using now], [not using now], [returning columns], [fetch mode])
+
+```php
+$ins = new PSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+$ins = new MSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+```
+
+#### Full example:
+
+```php
+include(__DIR__ . '/vendor/autoload.php');
+
+use PDOBulk\Db\PSLIns;
+use PDOBulk\Db\PSLInsUpd;
+use PDOBulk\Db\PSLDel;
+use PDOBulk\Db\MSLIns;
+use PDOBulk\Db\MSLInsUpd;
+use PDOBulk\Db\MSLDel;
+
+$pdo = new PDO(...);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+$data = array();
+
+$data[] = ['1', 'Mark', 'Soldier' , '24', '175', '85'];
+$data[] = ['2', 'Steve', 'Engineer', '36', '190', '95'];
+$data[] = ['3', 'Clara', 'Sniper', '18', '180', '57'];
+
+$ins = new PSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+//$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight'], ['id,name'], ['PDO::FETCH_ASSOC']);
+//$ins = new PSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+//$ins = new MSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+//$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight'], ['id,name'], ['PDO::FETCH_ASSOC']);
+//$ins = new MSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+
+$part = array(); // Define array for merge $res by RETURNING data of column or columns.
+
+foreach ($data as $fields) {
+
+    $id = $fields[0];
+    $name = $fields[1];
+    $class = $fields[2];
+    $age = $fields[3];
+    $height = $fields[4];
+    $weight = $fields[5];
+
+    $res = $ins->queue($id, $name, $class, $age, $height, $weight);
+    //$res = $ins->queuearray($fields);
+
+    if(!empty($res)) $part[] = $res;
+
+}
+
+//Bulk Write Complete Operation
+
+$res = $ins->flush();
+
+//Reassemble queue+flush part of RETURNING array
+
+if(!empty($res)) $part[] = $res;
+
+$retarray = array();
+
+foreach($part as $k => $v){
+    foreach($v as $km => $vm){
+        $retarray[]=$vm;
+    }
+}
+
+$tot = $ins->getTotalOperations();
+$aff = $ins->getAffectedRows();
+
+//Reset function for counters
+
+$ins->reset();
+
+print_r($retarray);
 
 print("Total queue operations: " . $tot . "\n");
 print("Total affected rows: " . $aff . "\n");

@@ -10,18 +10,32 @@ class PSLDel extends BulkDB
     protected function getQuery(int $numRecords) : string
     {
 
-        $parts = [];
+	$parts = [];
 
-        foreach ($this->ifields as $ifield) {
-            $parts[] = $ifield . ' = ?';
-        }
+	$rfields = implode(', ', $this->rfields);
 
-        $where = '(' . implode(' AND ', $parts) . ')';
+	foreach ($this->ifields as $ifield) {
+	    $parts[] = $ifield . ' = ?';
+	}
 
-        $query = 'DELETE FROM ' . $this->table . ' WHERE ' . $where;
-        $query .= str_repeat(' OR ' . $where, $numRecords - 1);
+	$where = '(' . implode(' AND ', $parts) . ')';
 
-        return $query;
+	$query = 'DELETE FROM ' . $this->table . ' WHERE ' . $where;
+
+	if (empty($rfields)) {
+
+	    $endquery = '';
+
+	} elseif (!empty($rfields)) {
+
+	    $endquery = ' RETURNING ' . $rfields . '';
+
+	}
+
+	$query .= str_repeat(' OR ' . $where, $numRecords - 1);
+	$query = ''. $query . '' . $endquery . '';
+
+	return $query;
 
     }
 
