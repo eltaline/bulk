@@ -84,9 +84,9 @@ $ins->resetall(); // Resetting buffer and counters
 ### PSLIns & MSLIns
 
 This class takes advantage of the bulk insert to empty/temp tables.
-Implements INSERT ... .
 
-- Supported RETURNING operator.
+- Implements INSERT ...
+- Supported RETURNING operator
 
 To use it, create a `PSLIns` or `MSLIns` instance with:
 
@@ -102,7 +102,8 @@ To use it, create a `PSLIns` or `MSLIns` instance with:
 ### PSLInsNth & MSLInsNth
 
 This class takes advantage of the bulk insert without duplicate key errors in tables.
-Implements ON CONFLICT DO NOTHING and INSERT IGNORE.
+
+- Implements ON CONFLICT DO NOTHING and INSERT IGNORE
 
 To use it, create a `PSLInsNth` or `MSLInsNth` instance with:
 
@@ -114,11 +115,11 @@ To use it, create a `PSLInsNth` or `MSLInsNth` instance with:
 ### PSLInsUpd & MSLInsUpd
 
 This class takes advantage of the bulk insert with simple math logic in tables.
-Implements ON CONFLICT (unqiue/composite key) DO UPDATE SET ... and ON DUPLICATE KEY UPDATE ... .
 
-- Supported + - / * math operators (column+column, column-column, column/column , column*column).
-- Supported | concatenation operator (column|column|;) where ; is separator.
-- Supported RETURNING operator.
+- Implements ON CONFLICT (unqiue/composite key) DO UPDATE SET ... and ON DUPLICATE KEY UPDATE ...
+- Supported + - / * math operators (column+column, column-column, column/column , column*column)
+- Supported | concatenation operator (column|column|;) where ; is separator
+- Supported RETURNING operator
 
 To use it, create a `PSLInsUpd` or `MSLInsUpd` instance with:
 
@@ -134,7 +135,9 @@ To use it, create a `PSLInsUpd` or `MSLInsUpd` instance with:
 ### PSLDel & MSLDel
 
 This class takes advantage of the bulk delete by value`s of column or columns.
-Implements DELETE FROM.
+
+- Implements DELETE ...
+- Supported RETURNING operator
 
 To use it, create a `PSLDel` or `MSLDel` instance with:
 
