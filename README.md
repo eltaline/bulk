@@ -235,7 +235,7 @@ $ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height
 $ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight']);
 ```
 
-Format: (connection object, queue size, table, [values columns], [not using now], [not using now], [returning columns], [fetch mode])
+Format: (connection object, queue size, table, [values columns])
 
 ```php
 $ins = new PSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight']);
