@@ -187,22 +187,33 @@ $pdo->commit(); // After loop with queue() or queuearray();
 Additionally use try with catch (Exception $e) for rollback transaction;
 
 ```php
-foreach (...) { 
+$pdo->beginTransaction();
 
-    try {
+try {
 
+    foreach (...) { 
 	$ins->queue(...);
 	//$ins->queuearray(...);
+    }
 
-    } catch (Exception $e) {
-
+} catch (Exception $e) {
 	$pdo->rollBack();
-
+	throw $ins;
     }
 
 }
 
-$ins->flush();
+try {
+
+    $ins->flush();
+    $pdo->commit();
+
+} catch (Exception $e) {
+
+    $pdo->rollBack();
+    throw $ins;
+
+}
 ```
 
 ### Simple Operations
