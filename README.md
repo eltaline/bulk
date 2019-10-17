@@ -57,7 +57,7 @@ CREATE TABLE tablename (id integer NOT NULL, name varchar(128), class varchar(12
 $ins->flush(); // Write last or < queue size, part of data from queue.
 ```
 
-**Queue functions queue() or queuearray() can be used only separately in one loop.
+**Queue functions queue() or queuearray() can be used only separately in one loop.**
 
 ```php
 $ins->queue(); // Collect data values until queue size, then write part of data.
