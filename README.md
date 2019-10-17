@@ -1,7 +1,7 @@
 Bulk\Db Project
 ========
 
-Tools for easy use Bulk Inserts with support ON CONFLICT and ON DUPLICATE KEY and simple math logic.
+Tools for easy use Bulk Inserts with support ON CONFLICT/ON DUPLICATE KEY, RERTURNING and simple math/concatenation logic.
 
 Contains helper classes for interacting with databases.
 
