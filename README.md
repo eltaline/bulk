@@ -334,14 +334,8 @@ $ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height
 ```php
 include(__DIR__ . '/vendor/autoload.php');
 
-use PDOBulk\Db\PSLIns;
-use PDOBulk\Db\PSLInsNth;
 use PDOBulk\Db\PSLInsUpd;
-use PDOBulk\Db\PSLDel;
-use PDOBulk\Db\MSLIns;
-use PDOBulk\Db\MSLInsNth;
 use PDOBulk\Db\MSLInsUpd;
-use PDOBulk\Db\MSLDel;
 
 $pdo = new PDO(...);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
