@@ -1,4 +1,4 @@
-Bulk\Db Project
+PDO Bulk Library
 ========
 
 Tools for easy use Bulk Inserts with support ON CONFLICT/ON DUPLICATE KEY, RETURNING and simple math/concatenation logic.
@@ -184,7 +184,7 @@ $pdo->beginTransaction(); // Before loop with queue() or queuearray();
 $pdo->commit(); // After loop with queue() or queuearray();
 ```
 
-Additionally use try with catch (Exception $e) for rollback transaction;
+Additionally use try with catch (Exception $e) for rollback transaction.
 
 ```php
 $pdo->beginTransaction();
@@ -490,8 +490,8 @@ if(!empty($res)) $part[] = $res;
 
 $retarray = array();
 
-foreach($part as $k => $v){
-    foreach($v as $km => $vm){
+foreach($part as $k => $v) {
+    foreach($v as $km => $vm) {
         $retarray[]=$vm;
     }
 }
@@ -516,7 +516,7 @@ To get the maximum performance out of this library, you should:
 - wrap your operations in a transaction
 - disable emulation of prepared statements (`PDO::ATTR_EMULATE_PREPARES=false`)
 
-These two tips combined can get you **up to 50% more throughput** in terms of inserts per second. Sample code:
+These two tips combined can get you **up to 50% more throughput** in terms of inserts per second.
 
 ### Recommendations
 
@@ -535,6 +535,6 @@ Recommended use this library with 100-1000 queries per bulk query insertions.
 - PDO also has a limit of 65535 query parameters per statement,
   effectively limiting the number of operations per query to `floor(65535 / number of columns)`.
 
-Maximum 65535 query parameters is allowed. Ex. 65535 / 10 columns ~= 10922 (is max queries per 1 bulk query)
+Maximum 65535 query parameters is allowed. Ex. 65535 / 10 columns ~= 10922 (is max queries per 1 bulk query).
 
 ### END
