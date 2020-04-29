@@ -49,6 +49,14 @@ abstract class BulkDB
 	    throw new \InvalidArgumentException('The table name need to be string');
 	}
 
+	$table = '"'.$table.'"';
+	foreach ($ifields as $i => $value) {
+		$ifields[$i] = '"'.$value.'"';
+	}
+	foreach ($cfields as $i => $value) {
+		$cfields[$i] = '"'.$value.'"';
+	}
+
 	$inumFields = count($ifields);
 	$cnumFields = count($cfields);
 	$enumFields = count($efields);
@@ -95,9 +103,9 @@ abstract class BulkDB
 
 		    $earray = preg_split('/([' . $delims . '])/', $efield, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-		    $efs = $earray[0];
+		    $efs = '"'.$earray[0].'"';
 		    $eop = $earray[1];
-		    $ese = $earray[2];
+		    $ese = '"'.$earray[2].'"';
 
 		    if ($eop === '+') {
 			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' + ' . $table . '.' . $ese . '';
