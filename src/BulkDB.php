@@ -49,13 +49,18 @@ abstract class BulkDB
 	    throw new \InvalidArgumentException('The table name need to be string');
 	}
 
-	$table = '"'.$table.'"';
-	foreach ($ifields as $i => $value) {
-		$ifields[$i] = '"'.$value.'"';
-	}
-	foreach ($cfields as $i => $value) {
-		$cfields[$i] = '"'.$value.'"';
-	}
+	if (preg_match('#PSL#', $ccl)) {
+        $table = '"'.$table.'"';
+        foreach ($ifields as $i => $value) {
+            $ifields[$i] = '"'.$value.'"';
+        }
+        foreach ($cfields as $i => $value) {
+            $cfields[$i] = '"'.$value.'"';
+        }
+        foreach ($rfields as $i => $value) {
+            $rfields[$i] = '"'.$value.'"';
+        }
+    }
 
 	$inumFields = count($ifields);
 	$cnumFields = count($cfields);
@@ -103,9 +108,15 @@ abstract class BulkDB
 
 		    $earray = preg_split('/([' . $delims . '])/', $efield, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-		    $efs = '"'.$earray[0].'"';
+            if (preg_match('#PSL#', $ccl)) {
+                $efs = '"'.$earray[0].'"';
+                $ese = '"'.$earray[2].'"';
+            } else {
+                $efs = $earray[0];
+                $ese = $earray[2];
+            }
+
 		    $eop = $earray[1];
-		    $ese = '"'.$earray[2].'"';
 
 		    if ($eop === '+') {
 			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' + ' . $table . '.' . $ese . '';
