@@ -112,8 +112,8 @@ abstract class BulkDB
 		    $earray = preg_split('/([' . $delims . '])/', $efield, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		    if (preg_match('#PSL#', $ccl)) {
-			    $efs = '"'.$earray[0].'"';
-			    $ese = '"'.$earray[2].'"';
+			$efs = '"'.$earray[0].'"';
+			$ese = '"'.$earray[2].'"';
 		    } else {
 			$efs = $earray[0];
 			$ese = $earray[2];

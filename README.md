@@ -104,6 +104,7 @@ To use it, create a `PSLIns` or `MSLIns` instance with:
 This class takes advantage of the bulk insert without duplicate key errors in tables.
 
 - Implements ON CONFLICT DO NOTHING and INSERT IGNORE
+- Supported RETURNING operator
 
 To use it, create a `PSLInsNth` or `MSLInsNth` instance with:
 
@@ -111,6 +112,10 @@ To use it, create a `PSLInsNth` or `MSLInsNth` instance with:
 - the number of inserts to perform per bulk query
 - the name of your table
 - the name of the columns to insert
+- optional set empty array(not used for INSERT, but need empty if set RETURNING options)
+- optional set empty array(not used for INSERT, but need empty if set RETURNING options)
+- optional set RETURNING field or fields or '*'
+- optional set PDO fetch mode for RETURNING clause(by default empty)
 
 ### PSLInsUpd & MSLInsUpd
 
@@ -417,6 +422,13 @@ Format: (connection object, queue size, table, [values columns], [not used], [no
 ```php
 $ins = new PSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
 $ins = new MSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+```
+
+Format: (connection object, queue size, table, [values columns], [not used], [not used], [returning columns], [fetch mode])
+
+```php
+$ins = new PSLInsNth($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+$ins = new MSLInsNth($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
 ```
 
 Format: (connection object, queue size, table, [values columns], [conflict/duplicate columns], [update columns], [returning columns], [fetch mode])
