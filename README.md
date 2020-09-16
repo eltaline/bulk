@@ -451,9 +451,11 @@ $ins = new MSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 
 include(__DIR__ . '/vendor/autoload.php');
 
 use PDOBulk\Db\PSLIns;
+use PDOBulk\Db\PSLInsNth;
 use PDOBulk\Db\PSLInsUpd;
 use PDOBulk\Db\PSLDel;
 use PDOBulk\Db\MSLIns;
+use PDOBulk\Db\MSLInsNth;
 use PDOBulk\Db\MSLInsUpd;
 use PDOBulk\Db\MSLDel;
 
@@ -468,9 +470,11 @@ $data[] = ['2', 'Steve', 'Engineer', '36', '190', '95'];
 $data[] = ['3', 'Clara', 'Sniper', '18', '180', '57'];
 
 $ins = new PSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+//$ins = new PSLInsNth($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
 //$ins = new PSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight'], ['id,name'], ['PDO::FETCH_ASSOC']);
 //$ins = new PSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
 //$ins = new MSLIns($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
+//$ins = new MSLInsNth($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
 //$ins = new MSLInsUpd($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','name'], ['class','weight'], ['id,name'], ['PDO::FETCH_ASSOC']);
 //$ins = new MSLDel($pdo, 1000, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], [], [], ['id,name'], ['PDO::FETCH_ASSOC']);
 
