@@ -1,7 +1,7 @@
 PDO Bulk Library
 ========
 
-Tools for easy use Bulk Inserts with support ON CONFLICT/ON DUPLICATE KEY, RETURNING and simple math/concatenation logic.
+Tools for easy use bulk/batch inserts with support ON CONFLICT/ON DUPLICATE KEY/DO NOTHING/INSERT IGNORE, RETURNING sql operators and simple math/concatenation logic.
 
 Contains helper classes for interacting with databases.
 
