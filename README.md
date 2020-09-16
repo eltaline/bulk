@@ -399,8 +399,8 @@ print("Total affected rows: " . $aff . "\n");
 
 Supported in next classes:
 
-PgSQL: `PSLIns`, `PSLInsUpd`, `PSLDel`.
-MySQL: `MSLIns`, `MSLInsUpd`, `MSLDel`.
+PgSQL: `PSLIns`, `PSLInsNth`, `PSLInsUpd`, `PSLDel`.
+MySQL: `MSLIns`, `MSLInsNth`, `MSLInsUpd`, `MSLDel`.
 
 Use one of supported class with RETURNING operator.
 
