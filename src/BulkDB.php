@@ -161,7 +161,12 @@ abstract class BulkDB
 
 		}
 
-		$fill = '' . $efield . ' = ' . $iname . '' . $efield . '' . $ename . '';
+		$escapeSymbol = '';
+		if (preg_match('#PSL#', $ccl)) {
+            $escapeSymbol = '"';
+        }
+
+		$fill = "{$escapeSymbol}{$efield}{$escapeSymbol} = {$iname}{$escapeSymbol}{$efield}{$escapeSymbol}{$ename}";
 		$ufields[] = $fill;
 
 	    }
