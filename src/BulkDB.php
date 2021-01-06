@@ -36,10 +36,12 @@ abstract class BulkDB
 
     private $result;
 
+    private $ccl;
+
     public function __construct(\PDO $pdo, int $operationsPerQuery, string $table, array $ifields = [], array $cfields = [], array $efields = [], array $rfields = [], array $style = [])
     {
 
-	$ccl = get_class($this);
+	$this->ccl = get_class($this);
 
 	if (($operationsPerQuery < 1) || (!is_int($operationsPerQuery))) {
 	    throw new \InvalidArgumentException('The number of operations per query must be 1 or more and need to be integer');
@@ -49,21 +51,18 @@ abstract class BulkDB
 	    throw new \InvalidArgumentException('The table name need to be string');
 	}
 
-	if (preg_match('#PSL#', $ccl)) {
 
-		$table = '"'.$table.'"';
+    $table = $this->addQuotes($table);
 
-		foreach ($ifields as $i => $value) {
-		    $ifields[$i] = '"'.$value.'"';
-		}
-		foreach ($cfields as $i => $value) {
-		    $cfields[$i] = '"'.$value.'"';
-		}
-		foreach ($rfields as $i => $value) {
-		    $rfields[$i] = '"'.$value.'"';
-		}
-
-	}
+    foreach ($ifields as $i => $value) {
+        $ifields[$i] = $this->addQuotes($value);
+    }
+    foreach ($cfields as $i => $value) {
+        $cfields[$i] = $this->addQuotes($value);
+    }
+    foreach ($rfields as $i => $value) {
+        $rfields[$i] = $this->addQuotes($value);
+    }
 
 	$inumFields = count($ifields);
 	$cnumFields = count($cfields);
@@ -89,12 +88,12 @@ abstract class BulkDB
 	    $regpat = '/[\+\-\*\/\|]/';
 	    $delims = '\+\-\*\/\|';
 
-	    if ($ccl === 'PDOBulk\Db\PSLInsUpd') {
+	    if ($this->ccl === 'PDOBulk\Db\PSLInsUpd') {
 
 		$iname = 'EXCLUDED.';
 		$ename = '';
 
-	    } elseif ($ccl === 'PDOBulk\Db\MSLInsUpd') {
+	    } elseif ($this->ccl === 'PDOBulk\Db\MSLInsUpd') {
 
 		$iname = 'VALUES(';
 		$ename = ')';
@@ -111,13 +110,8 @@ abstract class BulkDB
 
 		    $earray = preg_split('/([' . $delims . '])/', $efield, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-		    if (preg_match('#PSL#', $ccl)) {
-			$efs = '"'.$earray[0].'"';
-			$ese = '"'.$earray[2].'"';
-		    } else {
-			$efs = $earray[0];
-			$ese = $earray[2];
-		    }
+			$efs = $this->addQuotes($earray[0]);
+			$ese = $this->addQuotes($earray[2]);
 
 		    $eop = $earray[1];
 
@@ -161,12 +155,7 @@ abstract class BulkDB
 
 		}
 
-		$escapeSymbol = '';
-		if (preg_match('#PSL#', $ccl)) {
-		    $escapeSymbol = '"';
-		}
-
-		$fill = "{$escapeSymbol}{$efield}{$escapeSymbol} = {$iname}{$escapeSymbol}{$efield}{$escapeSymbol}{$ename}";
+		$fill = $this->addQuotes($efield) . " = {$iname}" . $this->addQuotes($efield) . "{$ename}";
 		$ufields[] = $fill;
 
 	    }
@@ -373,6 +362,18 @@ abstract class BulkDB
 
 	return $this->affectedRows;
 
+    }
+
+    protected function addQuotes(string $field): string
+    {
+        $escapeSymbol = '';
+        if (preg_match('#PSL#', $this->ccl)) {
+            $escapeSymbol = '"';
+        }
+        if (strpos($field, ':IS_RAW') !== false) {
+            return str_replace(':IS_RAW', '', $field);
+        }
+        return "{$escapeSymbol}{$field}{$escapeSymbol}";
     }
 
     abstract protected function getQuery(int $numRecords) : string;
