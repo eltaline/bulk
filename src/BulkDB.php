@@ -51,18 +51,17 @@ abstract class BulkDB
 	    throw new \InvalidArgumentException('The table name need to be string');
 	}
 
+	$table = $this->addQuotes($table);
 
-    $table = $this->addQuotes($table);
-
-    foreach ($ifields as $i => $value) {
-        $ifields[$i] = $this->addQuotes($value);
-    }
-    foreach ($cfields as $i => $value) {
-        $cfields[$i] = $this->addQuotes($value);
-    }
-    foreach ($rfields as $i => $value) {
-        $rfields[$i] = $this->addQuotes($value);
-    }
+	foreach ($ifields as $i => $value) {
+	    $ifields[$i] = $this->addQuotes($value);
+	}
+	foreach ($cfields as $i => $value) {
+	    $cfields[$i] = $this->addQuotes($value);
+	}
+	foreach ($rfields as $i => $value) {
+	    $rfields[$i] = $this->addQuotes($value);
+	}
 
 	$inumFields = count($ifields);
 	$cnumFields = count($cfields);
@@ -110,27 +109,35 @@ abstract class BulkDB
 
 		    $earray = preg_split('/([' . $delims . '])/', $efield, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-			$efs = $this->addQuotes($earray[0]);
-			$ese = $this->addQuotes($earray[2]);
+		    $efs = $this->addQuotes($earray[0]);
+		    $ese = $this->addQuotes($earray[2]);
 
 		    $eop = $earray[1];
 
 		    if ($eop === '+') {
+
 			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' + ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
+
 		    } elseif ($eop === '-') {
+
 			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' - ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
+
 		    } elseif ($eop === '*') {
+
 			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' * ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
+
 		    } elseif ($eop === '/') {
+
 			$fill = '' . $efs . ' = ' . $iname . '' . $efs . '' . $ename . ' / ' . $table . '.' . $ese . '';
 			$ufields[] = $fill;
 			continue;
+
 		    } elseif ($eop === '|') {
 
 			$edl = $earray[4] ?? null;
@@ -366,14 +373,19 @@ abstract class BulkDB
 
     protected function addQuotes(string $field): string
     {
-        $escapeSymbol = '';
-        if (preg_match('#PSL#', $this->ccl)) {
-            $escapeSymbol = '"';
-        }
-        if (strpos($field, ':IS_RAW') !== false) {
-            return str_replace(':IS_RAW', '', $field);
-        }
-        return "{$escapeSymbol}{$field}{$escapeSymbol}";
+
+	$escapeSymbol = '';
+
+	if (preg_match('#PSL#', $this->ccl)) {
+	    $escapeSymbol = '"';
+	}
+
+	if (strpos($field, ':IS_RAW') !== false) {
+	    return str_replace(':IS_RAW', '', $field);
+	}
+
+	return "{$escapeSymbol}{$field}{$escapeSymbol}";
+
     }
 
     abstract protected function getQuery(int $numRecords) : string;

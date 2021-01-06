@@ -526,9 +526,12 @@ print("Total queue operations: " . $tot . "\n");
 print("Total affected rows: " . $aff . "\n");
 ```
 
-### RAW sql
-For setting columns in RAW sql need adding suffix **:IS_RAW** in their names. Example:
+### RAW Sql
+
+For setting columns in RAW Sql format, You need add suffix **:IS_RAW** in column names. Example:
+
 ```php
+
 $ins = new PSLInsUpd($pdo, 1, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','COALESCE(name, \'test\'):IS_RAW'], ['name']);
 /*
   Prepared sql:
