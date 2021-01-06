@@ -1,4 +1,5 @@
 PDO Bulk Library
+PDO Bulk Library
 ========
 
 Tools for easy use bulk/batch inserts with support ON CONFLICT/ON DUPLICATE KEY/DO NOTHING/INSERT IGNORE, RETURNING sql operators and simple math/concatenation logic.
@@ -523,6 +524,18 @@ print_r($retarray);
 
 print("Total queue operations: " . $tot . "\n");
 print("Total affected rows: " . $aff . "\n");
+```
+
+### RAW sql
+For setting columns in RAW sql need adding suffix **:IS_RAW** in their names. Example:
+```php
+$ins = new PSLInsUpd($pdo, 1, 'users', ['id', 'name', 'class', 'age', 'height', 'weight'], ['id','COALESCE(name, \'test\'):IS_RAW'], ['name']);
+/*
+  Prepared sql:
+  INSERT INTO users ("id", "name", "class", "age", "height", "weight") VALUES (?, ?, ?, ?, ?, ?)
+  ON CONFLICT ("id", COALESCE(name, 'test')) DO UPDATE name = EXCLUDED."name"
+*/
+
 ```
 
 ### Performance tips

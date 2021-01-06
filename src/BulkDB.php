@@ -51,21 +51,16 @@ abstract class BulkDB
 
 	if (preg_match('#PSL#', $ccl)) {
 
-		$table = '"'.$table.'"';
+		$table = $this->addQuotes($table);
 
 		foreach ($ifields as $i => $value) {
-		    $ifields[$i] = '"'.$value.'"';
+		    $ifields[$i] = $this->addQuotes($value);
 		}
         foreach ($cfields as $i => $value) {
-            if (strpos($value, ':IS_RAW') !== false) {
-                $value = str_replace(':IS_RAW', '', $value);
-                $cfields[$i] = $value;
-                continue;
-            }
-            $cfields[$i] = '"' . $value . '"';
+            $cfields[$i] = $this->addQuotes($value);
         }
 		foreach ($rfields as $i => $value) {
-		    $rfields[$i] = '"'.$value.'"';
+		    $rfields[$i] = $this->addQuotes($value);
 		}
 
 	}
@@ -117,8 +112,8 @@ abstract class BulkDB
 		    $earray = preg_split('/([' . $delims . '])/', $efield, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		    if (preg_match('#PSL#', $ccl)) {
-			$efs = '"'.$earray[0].'"';
-			$ese = '"'.$earray[2].'"';
+			$efs = $this->addQuotes($earray[0]);
+			$ese = $this->addQuotes($earray[2]);
 		    } else {
 			$efs = $earray[0];
 			$ese = $earray[2];
@@ -166,12 +161,7 @@ abstract class BulkDB
 
 		}
 
-		$escapeSymbol = '';
-		if (preg_match('#PSL#', $ccl)) {
-            $escapeSymbol = '"';
-        }
-
-		$fill = "{$escapeSymbol}{$efield}{$escapeSymbol} = {$iname}{$escapeSymbol}{$efield}{$escapeSymbol}{$ename}";
+		$fill = $this->addQuotes($efield) . " = {$iname}" . $this->addQuotes($efield) . "{$ename}";
 		$ufields[] = $fill;
 
 	    }
@@ -378,6 +368,18 @@ abstract class BulkDB
 
 	return $this->affectedRows;
 
+    }
+
+    protected function addQuotes(string $field): string
+    {
+        $escapeSymbol = '';
+        if (preg_match('#PSL#', get_class($this))) {
+            $escapeSymbol = '"';
+        }
+        if (strpos($field, ':IS_RAW') !== false) {
+            return str_replace(':IS_RAW', '', $field);
+        }
+        return "{$escapeSymbol}{$field}{$escapeSymbol}";
     }
 
     abstract protected function getQuery(int $numRecords) : string;
