@@ -49,21 +49,18 @@ abstract class BulkDB
 	    throw new \InvalidArgumentException('The table name need to be string');
 	}
 
-	if (preg_match('#PSL#', $ccl)) {
 
-		$table = $this->addQuotes($table);
+    $table = $this->addQuotes($table);
 
-		foreach ($ifields as $i => $value) {
-		    $ifields[$i] = $this->addQuotes($value);
-		}
-        foreach ($cfields as $i => $value) {
-            $cfields[$i] = $this->addQuotes($value);
-        }
-		foreach ($rfields as $i => $value) {
-		    $rfields[$i] = $this->addQuotes($value);
-		}
-
-	}
+    foreach ($ifields as $i => $value) {
+        $ifields[$i] = $this->addQuotes($value);
+    }
+    foreach ($cfields as $i => $value) {
+        $cfields[$i] = $this->addQuotes($value);
+    }
+    foreach ($rfields as $i => $value) {
+        $rfields[$i] = $this->addQuotes($value);
+    }
 
 	$inumFields = count($ifields);
 	$cnumFields = count($cfields);
@@ -111,13 +108,8 @@ abstract class BulkDB
 
 		    $earray = preg_split('/([' . $delims . '])/', $efield, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-		    if (preg_match('#PSL#', $ccl)) {
 			$efs = $this->addQuotes($earray[0]);
 			$ese = $this->addQuotes($earray[2]);
-		    } else {
-			$efs = $earray[0];
-			$ese = $earray[2];
-		    }
 
 		    $eop = $earray[1];
 
