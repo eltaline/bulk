@@ -36,10 +36,12 @@ abstract class BulkDB
 
     private $result;
 
+    private $ccl;
+
     public function __construct(\PDO $pdo, int $operationsPerQuery, string $table, array $ifields = [], array $cfields = [], array $efields = [], array $rfields = [], array $style = [])
     {
 
-	$ccl = get_class($this);
+	$this->ccl = get_class($this);
 
 	if (($operationsPerQuery < 1) || (!is_int($operationsPerQuery))) {
 	    throw new \InvalidArgumentException('The number of operations per query must be 1 or more and need to be integer');
@@ -86,12 +88,12 @@ abstract class BulkDB
 	    $regpat = '/[\+\-\*\/\|]/';
 	    $delims = '\+\-\*\/\|';
 
-	    if ($ccl === 'PDOBulk\Db\PSLInsUpd') {
+	    if ($this->ccl === 'PDOBulk\Db\PSLInsUpd') {
 
 		$iname = 'EXCLUDED.';
 		$ename = '';
 
-	    } elseif ($ccl === 'PDOBulk\Db\MSLInsUpd') {
+	    } elseif ($this->ccl === 'PDOBulk\Db\MSLInsUpd') {
 
 		$iname = 'VALUES(';
 		$ename = ')';
@@ -365,7 +367,7 @@ abstract class BulkDB
     protected function addQuotes(string $field): string
     {
         $escapeSymbol = '';
-        if (preg_match('#PSL#', get_class($this))) {
+        if (preg_match('#PSL#', $this->ccl)) {
             $escapeSymbol = '"';
         }
         if (strpos($field, ':IS_RAW') !== false) {
