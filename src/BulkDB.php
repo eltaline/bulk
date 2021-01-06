@@ -56,9 +56,14 @@ abstract class BulkDB
 		foreach ($ifields as $i => $value) {
 		    $ifields[$i] = '"'.$value.'"';
 		}
-		foreach ($cfields as $i => $value) {
-		    $cfields[$i] = '"'.$value.'"';
-		}
+        foreach ($cfields as $i => $value) {
+            if (strpos($value, ':IS_RAW') !== false) {
+                $value = str_replace(':IS_RAW', '', $value);
+                $cfields[$i] = $value;
+                continue;
+            }
+            $cfields[$i] = '"' . $value . '"';
+        }
 		foreach ($rfields as $i => $value) {
 		    $rfields[$i] = '"'.$value.'"';
 		}
