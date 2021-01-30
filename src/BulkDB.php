@@ -212,7 +212,7 @@ abstract class BulkDB
 	$icount = count($ivalues);
 
 	if ($icount !== $this->inumFields) {
-	    throw new \InvalidArgumentException(sprintf('The number of values (%u) does not match the field count (%u).', $icount, $this->numFields));
+	    throw new \InvalidArgumentException(sprintf('The number of values (%u) does not match the field count (%u).', $icount, $this->inumFields));
 	}
 
 	foreach ($ivalues as $ivalue) {
@@ -254,7 +254,7 @@ abstract class BulkDB
 	$icount = count($ivalues);
 
 	if ($icount !== $this->inumFields) {
-	    throw new \InvalidArgumentException(sprintf('The number of values (%u) does not match the field count (%u).', $icount, $this->numFields));
+	    throw new \InvalidArgumentException(sprintf('The number of values (%u) does not match the field count (%u).', $icount, $this->inumFields));
 	}
 
 	foreach ($ivalues as $ivalue) {
